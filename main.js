@@ -18,8 +18,10 @@ function gameBoard() {
 
 	const markOnBoard = (row, column, mark) => {
 		if (row >= 0 && row < ROWS && column >= 0 && column < COLUMNS) {
+			if (board[row][column] === EMPTY_MARK) {
 			board[row][column] = mark;
 			return true;
+			}
 		}
 		return false; 
 	};
@@ -31,7 +33,7 @@ function gameBoard() {
 	return { getBoard, markOnBoard, resetBoard, ROWS, COLUMNS, EMPTY_MARK};
 }
 
-function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo') {
+function GameController(playerOneName, playerTwoName) {
 	const board = gameBoard();
 	const players = [
 		{ name: playerOneName, token: '0' },
@@ -42,8 +44,9 @@ function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo'
 	let turns = 0;
 
 	const playerTurnRow = document.getElementById('player-turn');
-	const PlayerTurn = document.createElement('p');
-	playerTurnRow.appendChild(PlayerTurn);
+	playerTurnRow.textContent = "";
+	const playerTurn = document.createElement('p');
+	playerTurnRow.appendChild(playerTurn);
 
 	const getActivePlayer = () => activePlayer;
 
@@ -70,7 +73,7 @@ function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo'
 
 	const printNewRound = () => {
 		if (!isGameOver) {
-			PlayerTurn.textContent = `${getActivePlayer().name}'s turn.`;
+			playerTurn.textContent = `${getActivePlayer().name}'s turn.`;
 		}
 	};
 
@@ -79,12 +82,12 @@ function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo'
 		if (board.markOnBoard(row, col, getActivePlayer().token)) {
 			turns++;
 			if (checkWin(board.getBoard(), getActivePlayer().token)) {
-				PlayerTurn.textContent = `${getActivePlayer().name} wins!`;
+				playerTurn.textContent = `${getActivePlayer().name} wins!`;
 				isGameOver = true;
 				return;
 			}
 			if (turns === board.ROWS * board.COLUMNS) {
-				PlayerTurn.textContent = "It's a draw!";
+				playerTurn.textContent = "It's a draw!";
 				isGameOver = true;
 				return;
 			}
@@ -116,7 +119,8 @@ function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo'
 		activePlayer = players[0];
 		turns = 0;
 		cells.forEach(cell => (cell.textContent = board.EMPTY_MARK));
-		PlayerTurn.textContent = `${getActivePlayer().name}'s turn.`;
+		playerTurn.textContent = `${getActivePlayer().name}'s turn.`;
+		startBtn.disabled = false;
 	};
 
 	printNewRound();
@@ -132,18 +136,19 @@ function GameController(playerOneName = 'PlayerOne', playerTwoName = 'PlayerTwo'
 const dialog = document.getElementById('dialog');
 const startBtn = document.getElementById('start');
 const resetBtn = document.getElementById('reset');
-const submitBtn = document.getElementById('submit');
+const form = document.getElementById('form');
 const playerOneInput = document.getElementById('playerOne');
 const playerTwoInput = document.getElementById('playerTwo');
 
 let game;
 
-submitBtn.addEventListener('click', (event) => {
+form.addEventListener('submit', (event) => {
 	event.preventDefault();
-	const playerOne = playerOneInput.value || 'Player One';
-	const playerTwo = playerTwoInput.value || 'Player Two';
+	const playerOne = playerOneInput.value;
+	const playerTwo = playerTwoInput.value;
 	game = GameController(playerOne, playerTwo);
 	dialog.close();
+	startBtn.disabled = true;
 })
 
 startBtn.addEventListener('click', (event) => {
