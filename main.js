@@ -1,29 +1,34 @@
-const boardContainer = document.getElementById('board-container');
-boardContainer.addEventListener('click', function(event) {
-	if (event.target.classList.contains('cell')) {
-		const position = event.target.getAttribute('data-position');
-		console.log('Clicked by position ', position)
-	} 
-})
-
 function gameBoard() {
-	const board = {
-      a: [ "", "", ""],
-      b: [ "", "", ""],
-      c: [ "", "", ""]
-    };
+	const ROWS = 3;
+	const COLUMNS = 3;
+	const EMPTY_MARK = "";
+	const board = [];
+
+	const createEmptyBoard = () => {
+		for (i = 0;i < ROWS;i++) {
+			board[i] = [];
+			for (j = 0; j < COLUMNS;j++) {
+				board[i][j] = EMPTY_MARK;
+			}		
+		}
+	}
+	createEmptyBoard();
+
 	const getBoard = () => board;
 
-	const putToken = (cellItem) => {
-		const [row, col] = cellItem;
-		if (board[row][col] === "") {
-			board[row][col] = game.getActivePlayer().token;
-		} 
+	const markOnBoard = (row, column, mark) => {
+		if (row >= 0 && row < ROWS && column >= 0 && column < COLUMNS) {
+			board[row][column] = mark;
+			return true;
+		}
+		return false; 
 	};
 
-	const printBoard = () => console.log(board);
+	const resetBoard = () => {
+        createEmptyBoard();
+	}	
 
-	return { getBoard, putToken, printBoard};
+	return { getBoard, markOnBoard, resetBoard, ROWS, COLUMNS, EMPTY_MARK};
 }
 
 function GameController(
@@ -45,24 +50,41 @@ function GameController(
 	const switchPlayerTurn = () => {
 		activePlayer = activePlayer === players[0] ? players[1] : players[0];
 	}
+	const boardContainer = document.getElementById('board-container');
+	boardContainer.addEventListener('click', function(event) {
+	if (event.target.classList.contains('cell')) {
+		const positionStr = event.target.getAttribute('data-position');
+		console.log('Clicked by position ', positionStr);
+		const cellNumber = parseInt(positionStr); 
+    const row = Math.floor((cellNumber - 1) / board.COLUMNS);
+    const col = (cellNumber - 1) % board.COLUMNS;
+		playRound(row, col);
+	} 
+})
 	const playerTurnRow = document.getElementById('player-turn');
 	const PlayerTurn = document.createElement('p');
 	playerTurnRow.appendChild(PlayerTurn);
+
 	const getActivePlayer = () => activePlayer;
 	const printNewRound = () => {
-		board.printBoard();
+		board.getBoard();
 		PlayerTurn.textContent = `${getActivePlayer().name}'s turn.`
 	};
-	const playRound = (cellItem) => {
-		board.putToken(cellItem);
-		switchPlayerTurn();
-		printNewRound();
-	};
+
+	const playRound = (row, col) => {
+		if (board.getBoard()[row][col] === board.EMPTY_MARK) {
+			board.markOnBoard(row, col, getActivePlayer().token);
+			switchPlayerTurn();
+			printNewRound();
+		} else {
+			console.log(`Cell [${row}, ${col}] is already occupied!`);
+			return
+		}
+};
 	printNewRound();
 	return {
-		playRound, getActivePlayer
+		playRound, getActivePlayer, getBoard: board.getBoard
 	};
 }
 
 const game = GameController();
-game.playRound('a1')
