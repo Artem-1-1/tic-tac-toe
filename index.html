@@ -12,6 +12,19 @@
 		<div class="header">
 			<h1>Tic Tac Toe</h1>
 		</div>
+		<dialog id="dialog">
+			<form action="/">
+				<div>
+					<label for="playerOne">Player One - 0:</label>
+					<input type="text" name="playerOne" id="playerOne" required>
+				</div>
+				<div>
+					<label for="playerTwo">Player Two - X:</label>
+					<input type="text" name="playerTwo" id="playerTwo" required>
+				</div>
+				<button id="submit" type="submit">Submit</button>
+			</form>
+		</dialog>
 		<div id="player-turn"></div>
 		<div id="board-container">
 			<div class="cell" data-position="1"></div>
@@ -25,7 +38,8 @@
 			<div class="cell" data-position="9"></div>
 		</div>
 		<div class="footer">
-			<button>Reset</button>
+			<button id="start">Start</button>
+			<button id="reset">Reset</button>
 		</div>
   </div>
 </body>
