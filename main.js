@@ -139,6 +139,7 @@ const resetBtn = document.getElementById('reset');
 const form = document.getElementById('form');
 const playerOneInput = document.getElementById('playerOne');
 const playerTwoInput = document.getElementById('playerTwo');
+const closeBtn = document.getElementById('close');
 
 let game;
 
@@ -160,3 +161,7 @@ resetBtn.addEventListener('click', (event) => {
 		game.resetGame();
 	}
 });
+
+closeBtn.addEventListener("click", () => {
+  dialog.close();
+})

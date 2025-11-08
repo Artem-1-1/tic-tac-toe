@@ -62,3 +62,21 @@ h1 {
 #reset {
 	background-color: var(--dark-magenta-color);
 }
+
+#form {
+	display: flex;
+	flex-direction: column;
+	padding: 2rem;
+	gap: 1rem;
+}
+
+#form > div {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+button > img {
+	width: 1.5rem;
+	height: 1.5rem;
+}
